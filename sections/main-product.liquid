@@ -5,33 +5,164 @@
   if selected_variant.compare_at_price > selected_variant.price
     assign on_sale = true
   endif
+
+  assign badge_text = ''
+  for tag in product.tags
+    assign tag_down = tag | downcase
+    if tag_down contains 'badge:'
+      assign badge_text = tag | split: ':' | last | strip
+      break
+    elsif tag_down == 'le clos'
+      assign badge_text = 'Le Clos'
+      break
+    elsif tag_down == 'last chance'
+      assign badge_text = 'Last Chance'
+      break
+    endif
+  endfor
+
+  assign taste_profile = product.metafields.custom.taste_profile.value
+  if taste_profile == blank
+    assign taste_profile = section.settings.default_taste_profile
+  endif
+
+  assign rating_score = product.metafields.custom.rating_score.value
+  if rating_score == blank
+    assign rating_score = section.settings.rating_score
+  endif
+  assign rating_count = product.metafields.custom.rating_count.value
+  if rating_count == blank
+    assign rating_count = section.settings.rating_count
+  endif
 %}
-<section class="product-shell page-width" data-product-root>
-  <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="{{ routes.root_url }}">Home</a>{% if product.collections.first %}<span>/</span><a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>{% endif %}<span>/</span><span>{{ product.title }}</span></nav>
-  <div class="product-page">
-    <div class="product-media{% if product.media.size <= 1 %} product-media--single{% endif %}">
-      {% if product.media.size > 1 %}<div class="product-thumbs">{% for media in product.media limit:10 %}{% if media.media_type == 'image' %}<button type="button" class="product-thumb{% if media.id == product.featured_media.id %} is-active{% endif %}" data-product-thumb="{{ media | image_url:width:1600 }}" aria-label="View image {{ forloop.index }}">{{ media | image_url:width:180 | image_tag:loading:'lazy', alt:media.alt }}</button>{% endif %}{% endfor %}</div>{% endif %}
-      <div class="product-main-media">{% if product.featured_media %}{{ product.featured_media | image_url:width:1800 | image_tag:id:'ProductMainImage', widths:'520,800,1100,1400,1800', sizes:'(max-width:900px) 100vw, 55vw', alt:product.featured_media.alt }}{% else %}{{ 'product-1' | placeholder_svg_tag:'placeholder-svg' }}{% endif %}</div>
+
+<section class="product-shell product-shell--reference" data-product-root>
+  <nav class="breadcrumbs product-reference-breadcrumbs" aria-label="Breadcrumb">
+    <a href="{{ routes.root_url }}">Home</a>
+    {% if product.collections.first %}<span>/</span><a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>{% endif %}
+    <span>/</span><span>{{ product.title }}</span>
+  </nav>
+
+  <div class="product-reference-layout">
+    <div class="product-reference-gallery">
+      <div class="product-reference-card">
+        {% if badge_text != blank %}<span class="product-reference-badge">{{ badge_text }}</span>{% endif %}
+        <button type="button" class="product-reference-heart" aria-label="Save product" data-wishlist-toggle data-product-handle="{{ product.handle }}">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20.3 5.4 13.9A4.7 4.7 0 0 1 12 7.2a4.7 4.7 0 0 1 6.6 6.7L12 20.3Z"/></svg>
+        </button>
+
+        <div class="product-reference-main-media">
+          {% if product.featured_media %}
+            {{ product.featured_media | image_url: width: 1800 | image_tag: id:'ProductMainImage', widths:'520,800,1100,1400,1800', sizes:'(max-width:980px) 100vw, 48vw', alt:product.featured_media.alt }}
+          {% else %}
+            {{ 'product-1' | placeholder_svg_tag:'placeholder-svg' }}
+          {% endif %}
+        </div>
+
+        {% if product.media.size > 1 %}
+          <div class="product-reference-thumbs">
+            {% for media in product.media limit:8 %}
+              {% if media.media_type == 'image' %}
+                <button type="button" class="product-thumb{% if media.id == product.featured_media.id %} is-active{% endif %}" data-product-thumb="{{ media | image_url:width:1600 }}" aria-label="View image {{ forloop.index }}">
+                  {{ media | image_url:width:180 | image_tag:loading:'lazy', alt:media.alt }}
+                </button>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
     </div>
 
-    <div class="product-info">
-      <div class="product-info__top">{% if product.vendor != blank %}<div class="product-info__vendor">{{ product.vendor }}</div>{% endif %}{% if product.available %}<span class="availability is-in">In stock</span>{% else %}<span class="availability">Sold out</span>{% endif %}</div>
+    <div class="product-reference-info">
+      <div class="product-reference-topline">
+        <div></div>
+        <button type="button" class="product-reference-share" onclick="if(navigator.share){navigator.share({title: {{ product.title | json }},url:window.location.href})}else if(navigator.clipboard){navigator.clipboard.writeText(window.location.href);this.querySelector('span').textContent='Copied'}">
+          <span>Share</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 5h5v5"/><path d="M10 14 19 5"/><path d="M19 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>
+        </button>
+      </div>
+
       <h1>{{ product.title }}</h1>
-      {% unless product.has_only_default_variant %}<div class="product-info__variant" data-variant-title>{{ selected_variant.title }}</div>{% endunless %}
-      <div class="product-price-row"><span class="price__compare{% unless on_sale %} is-hidden{% endunless %}" data-product-compare>{% if on_sale %}{{ selected_variant.compare_at_price | money }}{% endif %}</span><span class="price__current product-price" data-product-price>{% if settings.show_currency_code %}{{ selected_variant.price | money_with_currency }}{% else %}{{ selected_variant.price | money }}{% endif %}</span>{% if on_sale %}{% assign saving=selected_variant.compare_at_price | minus:selected_variant.price | times:100.0 | divided_by:selected_variant.compare_at_price | round %}<span class="price__save" data-product-save>{{ saving }}% Off</span>{% else %}<span class="price__save is-hidden" data-product-save></span>{% endif %}</div>
-      {% if selected_variant.inventory_management and selected_variant.inventory_quantity > 0 and selected_variant.inventory_quantity <= 5 %}<p class="stock-note" data-stock-note>Only {{ selected_variant.inventory_quantity }} left in stock</p>{% else %}<p class="stock-note is-hidden" data-stock-note></p>{% endif %}
 
-      {% form 'product', product, id:'ProductForm', class:'product-form' %}
-        {% unless product.has_only_default_variant %}<div class="variant-picker"><label for="VariantSelect">Choose option</label><div class="select-wrap"><select id="VariantSelect" name="id" data-variant-select>{% for variant in product.variants %}<option value="{{ variant.id }}"{% if variant == selected_variant %} selected{% endif %}{% unless variant.available %} disabled{% endunless %}>{{ variant.title }}{% unless variant.available %} — Sold out{% endunless %}</option>{% endfor %}</select>{% render 'icon', name:'chevron', size:17 %}</div></div>{% else %}<input type="hidden" name="id" value="{{ selected_variant.id }}">{% endunless %}
-        <div class="buy-row"><div class="qty"><button type="button" data-qty="minus" aria-label="Decrease quantity">−</button><input name="quantity" type="number" value="1" min="1" aria-label="Quantity"><button type="button" data-qty="plus" aria-label="Increase quantity">+</button></div><button type="submit" class="btn btn--full product-add" data-product-submit{% unless selected_variant.available %} disabled{% endunless %}>{% if selected_variant.available %}Add to cart{% else %}Sold out{% endif %}</button></div>
-        {% if section.settings.show_dynamic_checkout %}<div class="dynamic-checkout">{{ form | payment_button }}</div>{% endif %}
-      {% endform %}
+      <div class="product-reference-code">
+        {% unless product.has_only_default_variant or selected_variant.title == 'Title' %}{{ selected_variant.title }}{% endunless %}
+        {% if selected_variant.sku != blank %}<span>({{ selected_variant.sku }})</span>{% endif %}
+      </div>
 
-      <div class="product-perks"><div>{% render 'icon', name:'truck', size:23 %}<span><strong>Delivery options</strong>{{ section.settings.delivery_text }}</span></div><div>{% render 'icon', name:'shield', size:23 %}<span><strong>Eligibility checks</strong>{{ section.settings.compliance_text }}</span></div><div>{% render 'icon', name:'clock', size:23 %}<span><strong>Customer support</strong>{{ section.settings.service_text }}</span></div></div>
-      {% if product.description != blank %}<details class="product-accordion" open><summary>Product details {% render 'icon', name:'chevron', size:16 %}</summary><div class="product-description rte">{{ product.description }}</div></details>{% endif %}
-      <details class="product-accordion"><summary>Delivery & responsible retailing {% render 'icon', name:'chevron', size:16 %}</summary><div class="rte"><p>{{ section.settings.delivery_details }}</p></div></details>
+      {% if taste_profile != blank %}
+        <div class="product-reference-profile">{{ taste_profile }}</div>
+        <div class="product-reference-profile-label">Taste Profile</div>
+      {% endif %}
+
+      <div class="product-reference-copy-row">
+        <div class="product-reference-description">
+          {% if product.description != blank %}{{ product.description | strip_html | truncate: 360 }}{% endif %}
+        </div>
+        {% if rating_score != blank %}
+          <div class="product-reference-rating" aria-label="Product rating">
+            <span class="product-reference-rating-icon">●</span>
+            <strong>{{ rating_score }}</strong>
+            <span class="product-reference-rating-copy"><b>★★★★☆</b>{% if rating_count != blank %}<small>{{ rating_count }} ratings</small>{% endif %}</span>
+          </div>
+        {% endif %}
+      </div>
+
+      {% if product.description != blank %}<a href="#ProductDetails" class="product-reference-learn">Learn More</a>{% endif %}
+
+      <div class="product-reference-buy">
+        <div class="product-reference-buy-head">
+          <div class="product-price-row product-reference-price-row">
+            <span class="price__compare{% unless on_sale %} is-hidden{% endunless %}" data-product-compare>{% if on_sale %}{{ selected_variant.compare_at_price | money }}{% endif %}</span>
+            <span class="price__current product-price" data-product-price>{% if settings.show_currency_code %}{{ selected_variant.price | money_with_currency }}{% else %}{{ selected_variant.price | money }}{% endif %}</span>
+            {% if on_sale %}{% assign saving = selected_variant.compare_at_price | minus:selected_variant.price | times:100.0 | divided_by:selected_variant.compare_at_price | round %}<span class="price__save" data-product-save>{{ saving }}% Off</span>{% else %}<span class="price__save is-hidden" data-product-save></span>{% endif %}
+          </div>
+          {% if product.available %}<span class="availability is-in">In stock</span>{% else %}<span class="availability">Sold out</span>{% endif %}
+        </div>
+
+        {% if selected_variant.inventory_management and selected_variant.inventory_quantity > 0 and selected_variant.inventory_quantity <= 5 %}<p class="stock-note" data-stock-note>Only {{ selected_variant.inventory_quantity }} left in stock</p>{% else %}<p class="stock-note is-hidden" data-stock-note></p>{% endif %}
+
+        {% form 'product', product, id:'ProductForm', class:'product-form' %}
+          {% unless product.has_only_default_variant %}
+            <div class="variant-picker">
+              <label for="VariantSelect">Choose option</label>
+              <div class="select-wrap">
+                <select id="VariantSelect" name="id" data-variant-select>
+                  {% for variant in product.variants %}<option value="{{ variant.id }}"{% if variant == selected_variant %} selected{% endif %}{% unless variant.available %} disabled{% endunless %}>{{ variant.title }}{% unless variant.available %} — Sold out{% endunless %}</option>{% endfor %}
+                </select>
+                {% render 'icon', name:'chevron', size:17 %}
+              </div>
+            </div>
+          {% else %}
+            <input type="hidden" name="id" value="{{ selected_variant.id }}">
+          {% endunless %}
+
+          <div class="buy-row">
+            <div class="qty"><button type="button" data-qty="minus" aria-label="Decrease quantity">−</button><input name="quantity" type="number" value="1" min="1" aria-label="Quantity"><button type="button" data-qty="plus" aria-label="Increase quantity">+</button></div>
+            <button type="submit" class="btn btn--full product-add" data-product-submit{% unless selected_variant.available %} disabled{% endunless %}>{% if selected_variant.available %}Add to cart{% else %}Sold out{% endif %}</button>
+          </div>
+          {% if section.settings.show_dynamic_checkout %}<div class="dynamic-checkout">{{ form | payment_button }}</div>{% endif %}
+        {% endform %}
+      </div>
+
+      <div class="product-perks product-reference-perks">
+        <div>{% render 'icon', name:'truck', size:23 %}<span><strong>Delivery options</strong>{{ section.settings.delivery_text }}</span></div>
+        <div>{% render 'icon', name:'shield', size:23 %}<span><strong>Eligibility checks</strong>{{ section.settings.compliance_text }}</span></div>
+        <div>{% render 'icon', name:'clock', size:23 %}<span><strong>Customer support</strong>{{ section.settings.service_text }}</span></div>
+      </div>
+
+      {% if product.description != blank %}
+        <details class="product-accordion product-reference-details" id="ProductDetails" open>
+          <summary>Product details {% render 'icon', name:'chevron', size:16 %}</summary>
+          <div class="product-description rte">{{ product.description }}</div>
+        </details>
+      {% endif %}
+      <details class="product-accordion product-reference-details">
+        <summary>Delivery & responsible retailing {% render 'icon', name:'chevron', size:16 %}</summary>
+        <div class="rte"><p>{{ section.settings.delivery_details }}</p></div>
+      </details>
     </div>
   </div>
+
   <script type="application/json" data-product-variants>{{ product.variants | json }}</script>
 </section>
 {% schema %}
@@ -39,6 +170,9 @@
   "name":"Product information",
   "settings":[
     {"type":"checkbox","id":"show_dynamic_checkout","label":"Show dynamic checkout","default":true},
+    {"type":"text","id":"default_taste_profile","label":"Default taste profile"},
+    {"type":"text","id":"rating_score","label":"Rating score (optional)"},
+    {"type":"text","id":"rating_count","label":"Rating count (optional)"},
     {"type":"text","id":"delivery_text","label":"Delivery note","default":"Convenient windows shown at checkout"},
     {"type":"text","id":"compliance_text","label":"Compliance note","default":"Age and licence checks where required"},
     {"type":"text","id":"service_text","label":"Service note","default":"Help with orders and delivery"},
