@@ -23,8 +23,12 @@ jobs:
             echo "Waiting for all 5 package parts; found $count."
             exit 0
           fi
-          cat theme-package.part01 theme-package.part02 theme-package.part03 theme-package.part04 theme-package.part05 > /tmp/theme-package.b64
+          echo "Package diagnostics:"
+          wc -c theme-package.part01 theme-package.part02 theme-package.part03 theme-package.part04 theme-package.part05
+          sha256sum theme-package.part01 theme-package.part02 theme-package.part03 theme-package.part04 theme-package.part05
+          cat theme-package.part01 theme-package.part02 theme-package.part03 theme-package.part04 theme-package.part05 | tr -d '\r\n\t ' > /tmp/theme-package.b64
           base64 -d /tmp/theme-package.b64 > /tmp/shopify-theme.zip
+          unzip -t /tmp/shopify-theme.zip
           unzip -oq /tmp/shopify-theme.zip -d .
           rm -f theme-package.part01 theme-package.part02 theme-package.part03 theme-package.part04 theme-package.part05 /tmp/theme-package.b64 /tmp/shopify-theme.zip
 
