@@ -1,0 +1,32 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Premium Delivery Final",
+    "theme_version": "2.0.0",
+    "theme_author": "Custom",
+    "theme_documentation_url": "https://help.shopify.com/en/manual/online-store/themes",
+    "theme_support_url": "https://help.shopify.com/"
+  },
+  {
+    "name": "Brand & layout",
+    "settings": [
+      {"type":"image_picker","id":"logo","label":"Logo"},
+      {"type":"image_picker","id":"favicon","label":"Favicon"},
+      {"type":"text","id":"logo_text","label":"Fallback logo text","default":"YOUR STORE"},
+      {"type":"color","id":"brand_color","label":"Primary brand color","default":"#db1f2a"},
+      {"type":"color","id":"brand_dark_color","label":"Brand hover color","default":"#b5121b"},
+      {"type":"color","id":"accent_color","label":"Accent color","default":"#f6c94c"},
+      {"type":"range","id":"page_width","min":1100,"max":1600,"step":50,"unit":"px","label":"Desktop content width","default":1450}
+    ]
+  },
+  {
+    "name": "Store settings",
+    "settings": [
+      {"type":"text","id":"default_location","label":"Default location","default":"Dubai"},
+      {"type":"checkbox","id":"show_currency_code","label":"Show currency code","default":true},
+      {"type":"text","id":"free_delivery_threshold","label":"Free delivery threshold (minor currency units)","info":"Example: 25000 = AED 250. Used only for cart progress messaging.","default":"25000"},
+      {"type":"text","id":"customer_service_phone","label":"Customer service phone","default":"+971 XX XXX XXXX"},
+      {"type":"text","id":"customer_service_email","label":"Customer service email","default":"support@example.com"}
+    ]
+  }
+]

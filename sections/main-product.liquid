@@ -1,0 +1,47 @@
+{% liquid
+  assign selected_variant = product.selected_or_first_available_variant
+  assign on_sale = false
+  if selected_variant.compare_at_price > selected_variant.price
+    assign on_sale = true
+  endif
+%}
+<section class="product-shell page-width" data-product-root>
+  <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="{{ routes.root_url }}">Home</a>{% if product.collections.first %}<span>/</span><a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>{% endif %}<span>/</span><span>{{ product.title }}</span></nav>
+  <div class="product-page">
+    <div class="product-media">
+      {% if product.media.size > 1 %}<div class="product-thumbs">{% for media in product.media limit:10 %}{% if media.media_type == 'image' %}<button type="button" class="product-thumb{% if media.id == product.featured_media.id %} is-active{% endif %}" data-product-thumb="{{ media | image_url:width:1600 }}" aria-label="View image {{ forloop.index }}">{{ media | image_url:width:180 | image_tag:loading:'lazy', alt:media.alt }}</button>{% endif %}{% endfor %}</div>{% endif %}
+      <div class="product-main-media">{% if product.featured_media %}{{ product.featured_media | image_url:width:1800 | image_tag:id:'ProductMainImage', widths:'520,800,1100,1400,1800', sizes:'(max-width:900px) 100vw, 55vw', alt:product.featured_media.alt }}{% else %}{{ 'product-1' | placeholder_svg_tag:'placeholder-svg' }}{% endif %}</div>
+    </div>
+
+    <div class="product-info">
+      <div class="product-info__top">{% if product.vendor != blank %}<div class="product-info__vendor">{{ product.vendor }}</div>{% endif %}{% if product.available %}<span class="availability is-in">In stock</span>{% else %}<span class="availability">Sold out</span>{% endif %}</div>
+      <h1>{{ product.title }}</h1>
+      {% unless product.has_only_default_variant %}<div class="product-info__variant" data-variant-title>{{ selected_variant.title }}</div>{% endunless %}
+      <div class="product-price-row"><span class="price__compare{% unless on_sale %} is-hidden{% endunless %}" data-product-compare>{% if on_sale %}{{ selected_variant.compare_at_price | money }}{% endif %}</span><span class="price__current product-price" data-product-price>{% if settings.show_currency_code %}{{ selected_variant.price | money_with_currency }}{% else %}{{ selected_variant.price | money }}{% endif %}</span>{% if on_sale %}{% assign saving=selected_variant.compare_at_price | minus:selected_variant.price | times:100.0 | divided_by:selected_variant.compare_at_price | round %}<span class="price__save" data-product-save>{{ saving }}% Off</span>{% else %}<span class="price__save is-hidden" data-product-save></span>{% endif %}</div>
+      {% if selected_variant.inventory_management and selected_variant.inventory_quantity > 0 and selected_variant.inventory_quantity <= 5 %}<p class="stock-note" data-stock-note>Only {{ selected_variant.inventory_quantity }} left in stock</p>{% else %}<p class="stock-note is-hidden" data-stock-note></p>{% endif %}
+
+      {% form 'product', product, id:'ProductForm', class:'product-form' %}
+        {% unless product.has_only_default_variant %}<div class="variant-picker"><label for="VariantSelect">Choose option</label><div class="select-wrap"><select id="VariantSelect" name="id" data-variant-select>{% for variant in product.variants %}<option value="{{ variant.id }}"{% if variant == selected_variant %} selected{% endif %}{% unless variant.available %} disabled{% endunless %}>{{ variant.title }}{% unless variant.available %} — Sold out{% endunless %}</option>{% endfor %}</select>{% render 'icon', name:'chevron', size:17 %}</div></div>{% else %}<input type="hidden" name="id" value="{{ selected_variant.id }}">{% endunless %}
+        <div class="buy-row"><div class="qty"><button type="button" data-qty="minus" aria-label="Decrease quantity">−</button><input name="quantity" type="number" value="1" min="1" aria-label="Quantity"><button type="button" data-qty="plus" aria-label="Increase quantity">+</button></div><button type="submit" class="btn btn--full product-add" data-product-submit{% unless selected_variant.available %} disabled{% endunless %}>{% if selected_variant.available %}Add to cart{% else %}Sold out{% endif %}</button></div>
+        {% if section.settings.show_dynamic_checkout %}<div class="dynamic-checkout">{{ form | payment_button }}</div>{% endif %}
+      {% endform %}
+
+      <div class="product-perks"><div>{% render 'icon', name:'truck', size:23 %}<span><strong>Delivery options</strong>{{ section.settings.delivery_text }}</span></div><div>{% render 'icon', name:'shield', size:23 %}<span><strong>Eligibility checks</strong>{{ section.settings.compliance_text }}</span></div><div>{% render 'icon', name:'clock', size:23 %}<span><strong>Customer support</strong>{{ section.settings.service_text }}</span></div></div>
+      {% if product.description != blank %}<details class="product-accordion" open><summary>Product details {% render 'icon', name:'chevron', size:16 %}</summary><div class="product-description rte">{{ product.description }}</div></details>{% endif %}
+      <details class="product-accordion"><summary>Delivery & responsible retailing {% render 'icon', name:'chevron', size:16 %}</summary><div class="rte"><p>{{ section.settings.delivery_details }}</p></div></details>
+    </div>
+  </div>
+  <script type="application/json" data-product-variants>{{ product.variants | json }}</script>
+</section>
+{% schema %}
+{
+  "name":"Product information",
+  "settings":[
+    {"type":"checkbox","id":"show_dynamic_checkout","label":"Show dynamic checkout","default":true},
+    {"type":"text","id":"delivery_text","label":"Delivery note","default":"Convenient windows shown at checkout"},
+    {"type":"text","id":"compliance_text","label":"Compliance note","default":"Age and licence checks where required"},
+    {"type":"text","id":"service_text","label":"Service note","default":"Help with orders and delivery"},
+    {"type":"textarea","id":"delivery_details","label":"Delivery details","default":"Delivery times, geographic availability, age restrictions and licence requirements depend on your local rules and store configuration. Keep this text updated before launch."}
+  ]
+}
+{% endschema %}

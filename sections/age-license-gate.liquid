@@ -1,0 +1,33 @@
+{% if section.settings.enabled %}
+<div id="AgeLicenseGate" class="modal-shell age-gate" data-mode="{{ section.settings.mode }}" role="dialog" aria-modal="true" aria-label="Age and eligibility confirmation" aria-hidden="true">
+  <div class="modal-card age-modal__grid">
+    <div class="age-modal__main">
+      <span class="modal-kicker">{{ section.settings.eyebrow }}</span><h2>{{ section.settings.heading }}</h2><p>{{ section.settings.text }}</p>
+      <div class="age-checks"><div class="age-check">{% render 'icon', name:'check', size:20 %}<span>{{ section.settings.check_1 }}</span></div><div class="age-check">{% render 'icon', name:'check', size:20 %}<span>{{ section.settings.check_2 }}</span></div></div>
+      <div class="modal-actions"><button class="btn btn--full" data-age-confirm>{{ section.settings.confirm_label }}</button>{% if section.settings.exit_link != blank %}<a class="btn btn--outline btn--full" href="{{ section.settings.exit_link }}">{{ section.settings.exit_label }}</a>{% endif %}</div>
+      <p class="age-footnote">{{ section.settings.footnote }}</p>
+    </div>
+    <div class="age-modal__aside"><div class="age-modal__mark">21+</div><h3>{{ section.settings.aside_heading }}</h3><p>{{ section.settings.aside_text }}</p>{% if section.settings.aside_button_label != blank and section.settings.aside_button_link != blank %}<a class="btn btn--light" href="{{ section.settings.aside_button_link }}">{{ section.settings.aside_button_label }}</a>{% endif %}</div>
+  </div>
+</div>
+{% endif %}
+{% schema %}
+{
+  "name":"Age & eligibility gate",
+  "settings":[
+    {"type":"checkbox","id":"enabled","label":"Enable gate","default":true},
+    {"type":"select","id":"mode","label":"Display","options":[{"value":"once","label":"Once per device"},{"value":"always","label":"Every page load (testing)"}],"default":"once"},
+    {"type":"text","id":"eyebrow","label":"Eyebrow","default":"Welcome"},
+    {"type":"text","id":"heading","label":"Heading","default":"Are you 21 or older?"},
+    {"type":"textarea","id":"text","label":"Text","default":"Please confirm that you meet the age and eligibility requirements that apply to your purchase."},
+    {"type":"text","id":"check_1","label":"Check 1","default":"I am of legal purchasing age."},
+    {"type":"text","id":"check_2","label":"Check 2","default":"I meet any licence or permit requirement applicable to my order."},
+    {"type":"text","id":"confirm_label","label":"Confirm button","default":"I confirm — enter store"},
+    {"type":"text","id":"exit_label","label":"Exit button","default":"Exit"},{"type":"url","id":"exit_link","label":"Exit link"},
+    {"type":"text","id":"footnote","label":"Footnote","default":"Configure this wording for your jurisdiction before launch."},
+    {"type":"text","id":"aside_heading","label":"Side heading","default":"Know before you buy"},
+    {"type":"textarea","id":"aside_text","label":"Side text","default":"Use this area for your licence, delivery-area and responsible-retailing information."},
+    {"type":"text","id":"aside_button_label","label":"Side button","default":"Learn more"},{"type":"url","id":"aside_button_link","label":"Side link"}
+  ]
+}
+{% endschema %}

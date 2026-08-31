@@ -1,0 +1,27 @@
+<section class="section">
+  <div class="page-width">
+    <div class="section-head"><div><h2>{{ section.settings.heading }}</h2>{% if section.settings.text != blank %}<p>{{ section.settings.text }}</p>{% endif %}</div>{% if section.settings.link_label != blank %}<a href="{{ section.settings.link }}">{{ section.settings.link_label }}</a>{% endif %}</div>
+    <div class="category-grid">
+      {% for block in section.blocks %}
+        {% assign collection = block.settings.collection %}
+        <a class="category-card" href="{% if collection != blank %}{{ collection.url }}{% else %}{{ block.settings.link }}{% endif %}" {{ block.shopify_attributes }}>
+          {% if block.settings.image != blank %}
+            {{ block.settings.image | image_url: width: 720 | image_tag: loading:'lazy', widths:'240,360,500,720', sizes:'(max-width:640px) 42vw, (max-width:1200px) 33vw, 16vw', alt:block.settings.title }}
+          {% elsif collection.featured_image != blank %}
+            {{ collection.featured_image | image_url: width: 720 | image_tag: loading:'lazy', widths:'240,360,500,720', sizes:'(max-width:640px) 42vw, (max-width:1200px) 33vw, 16vw', alt:collection.title }}
+          {% else %}<div class="category-card__fallback"></div>{% endif %}
+          <span class="category-card__title">{% if block.settings.title != blank %}{{ block.settings.title }}{% elsif collection != blank %}{{ collection.title }}{% else %}Category{% endif %}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+ "name":"Category cards",
+ "settings":[{"type":"text","id":"heading","label":"Heading","default":"Shop by category"},{"type":"text","id":"text","label":"Text","default":"Everything you need, easy to browse."},{"type":"text","id":"link_label","label":"Link label","default":"Shop all"},{"type":"url","id":"link","label":"Link"}],
+ "blocks":[{"type":"category","name":"Category","settings":[{"type":"collection","id":"collection","label":"Collection"},{"type":"image_picker","id":"image","label":"Custom image"},{"type":"text","id":"title","label":"Custom title"},{"type":"url","id":"link","label":"Custom link"}]}],
+ "max_blocks":12,
+ "presets":[{"name":"Category cards","blocks":[{"type":"category","settings":{"title":"Wine"}},{"type":"category","settings":{"title":"Spirits"}},{"type":"category","settings":{"title":"Beer & Cider"}},{"type":"category","settings":{"title":"Sparkling"}},{"type":"category","settings":{"title":"Ready to Drink"}},{"type":"category","settings":{"title":"Gifting"}}]}]
+}
+{% endschema %}

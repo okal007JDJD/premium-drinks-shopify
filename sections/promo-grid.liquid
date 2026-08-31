@@ -1,0 +1,21 @@
+<section class="section">
+  <div class="page-width">
+    <div class="promo-grid">
+      {% for block in section.blocks %}
+        <a class="promo-card{% unless forloop.first %} promo-card--small{% endunless %}" href="{{ block.settings.link | default: routes.all_products_collection_url }}" {{ block.shopify_attributes }}>
+          {% if block.settings.image != blank %}{{ block.settings.image | image_url: width:1600 | image_tag: loading:'lazy', widths:'600,900,1200,1600', sizes:'(max-width:900px) 100vw, 60vw', alt:block.settings.heading }}{% else %}<div class="promo-placeholder{% unless forloop.first %} alt{% endunless %}" style="position:absolute;inset:0;z-index:-2"></div>{% endif %}
+          <div class="promo-card__content"><h3>{{ block.settings.heading }}</h3>{% if block.settings.text != blank %}<p>{{ block.settings.text }}</p>{% endif %}<span class="btn btn--light">{{ block.settings.button_label }}</span></div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+ "name":"Promo grid",
+ "settings":[],
+ "blocks":[{"type":"promo","name":"Promotion","settings":[{"type":"image_picker","id":"image","label":"Image"},{"type":"text","id":"heading","label":"Heading","default":"Offers worth celebrating"},{"type":"textarea","id":"text","label":"Text","default":"Save on selected favourites for a limited time."},{"type":"text","id":"button_label","label":"Button label","default":"Shop offers"},{"type":"url","id":"link","label":"Link"}]}],
+ "max_blocks":2,
+ "presets":[{"name":"Promo grid","blocks":[{"type":"promo"},{"type":"promo","settings":{"heading":"Gifts made easy","text":"Find a bottle for every occasion.","button_label":"Shop gifting"}}]}]
+}
+{% endschema %}

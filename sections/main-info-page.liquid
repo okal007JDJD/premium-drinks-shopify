@@ -1,0 +1,6 @@
+<section class="section page-width narrow-page">
+  <nav class="breadcrumbs"><a href="{{ routes.root_url }}">Home</a><span>/</span><span>{{ page.title }}</span></nav>
+  <header class="info-hero"><span class="modal-kicker">{{ section.settings.eyebrow }}</span><h1>{{ page.title }}</h1>{% if section.settings.intro != blank %}<p>{{ section.settings.intro }}</p>{% endif %}</header>
+  <div class="info-card rte">{% if page.content != blank %}{{ page.content }}{% else %}{{ section.settings.fallback_content }}{% endif %}</div>
+</section>
+{% schema %}{"name":"Information page","settings":[{"type":"text","id":"eyebrow","label":"Eyebrow","default":"Store information"},{"type":"textarea","id":"intro","label":"Intro"},{"type":"richtext","id":"fallback_content","label":"Fallback content","default":"<p>Add your final store information in Shopify Pages before launch.</p>"}]}{% endschema %}

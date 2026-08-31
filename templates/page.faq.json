@@ -1,0 +1,47 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-faq",
+      "settings": {},
+      "blocks": {
+        "q1": {
+          "type": "faq",
+          "settings": {
+            "question": "How does delivery work?",
+            "answer": "Delivery windows and fees are shown during checkout. Update this answer with your final delivery policy before launch."
+          }
+        },
+        "q2": {
+          "type": "faq",
+          "settings": {
+            "question": "What eligibility checks apply?",
+            "answer": "Customers must meet the legal age and any licence or permit requirements that apply in the delivery area."
+          }
+        },
+        "q3": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I change or cancel an order?",
+            "answer": "Add your final cancellation policy here."
+          }
+        },
+        "q4": {
+          "type": "faq",
+          "settings": {
+            "question": "How can I contact support?",
+            "answer": "Use the Contact page or the phone and email shown in the footer."
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4"
+      ]
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

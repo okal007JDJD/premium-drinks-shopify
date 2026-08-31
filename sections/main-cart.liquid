@@ -1,0 +1,30 @@
+<section class="cart-page page-width">
+  <h1>Your cart</h1>
+  {% if cart.item_count == 0 %}
+    <div class="empty-state"><h2>Your cart is empty</h2><p>Browse our categories and find something great.</p><a class="btn" href="{{ routes.all_products_collection_url }}">Start shopping</a></div>
+  {% else %}
+    <form action="{{ routes.cart_url }}" method="post" id="cart">
+      <div class="cart-layout">
+        <div class="cart-lines">
+          {% for item in cart.items %}
+            <div class="cart-line">
+              <a class="cart-line__image" href="{{ item.url }}">{% if item.image %}{{ item.image | image_url: width:260 | image_tag: loading:'lazy', alt:item.product.title }}{% endif %}</a>
+              <div><a class="cart-line__title" href="{{ item.url }}">{{ item.product.title }}</a>{% unless item.product.has_only_default_variant %}<div class="cart-line__variant">{{ item.variant.title }}</div>{% endunless %}<div style="margin-top:10px"><input style="width:75px;height:40px;border:1px solid #ddd;border-radius:8px;padding:0 8px" type="number" name="updates[]" value="{{ item.quantity }}" min="0" aria-label="Quantity for {{ item.product.title }}"></div><a style="font-size:12px;text-decoration:underline;color:#777" href="{{ item.url_to_remove }}">Remove</a></div>
+              <div class="cart-line__price">{{ item.final_line_price | money }}</div>
+            </div>
+          {% endfor %}
+          <button class="btn btn--outline" type="submit" name="update" style="margin-top:18px">Update cart</button>
+        </div>
+        <aside class="cart-summary">
+          <h2 style="margin-top:0">Order summary</h2>
+          <div class="cart-summary__row"><span>Subtotal</span><strong>{{ cart.items_subtotal_price | money_with_currency }}</strong></div>
+          {% if cart.total_discount > 0 %}<div class="cart-summary__row"><span>Discounts</span><strong>-{{ cart.total_discount | money }}</strong></div>{% endif %}
+          <div class="cart-summary__row cart-summary__total"><span>Total</span><span>{{ cart.total_price | money_with_currency }}</span></div>
+          <p class="cart-note">Taxes, delivery fees and any required eligibility checks are calculated or confirmed at checkout.</p>
+          <button class="btn btn--dark btn--full" type="submit" name="checkout">Checkout securely</button>
+        </aside>
+      </div>
+    </form>
+  {% endif %}
+</section>
+{% schema %}{"name":"Cart","settings":[]}{% endschema %}

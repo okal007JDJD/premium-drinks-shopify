@@ -1,0 +1,121 @@
+{
+  "current": {
+    "logo_text": "YOUR STORE",
+    "brand_color": "#db1f2a",
+    "brand_dark_color": "#b5121b",
+    "accent_color": "#f6c94c",
+    "default_location": "Dubai",
+    "show_currency_code": true,
+    "page_width": 1450,
+    "free_delivery_threshold": "25000",
+    "customer_service_phone": "+971 XX XXX XXXX",
+    "customer_service_email": "support@example.com",
+    "sections": {
+      "announcement-bar": {
+        "type": "announcement-bar",
+        "settings": {
+          "show": true,
+          "icon": "\u25cf",
+          "text": "Fast delivery across Dubai \u2014 eligibility checks may apply",
+          "side_text": "Shop responsibly \u00b7 21+"
+        }
+      },
+      "header": {
+        "type": "header",
+        "blocks": {
+          "loc1": {
+            "type": "location",
+            "settings": {
+              "name": "Dubai"
+            }
+          },
+          "loc2": {
+            "type": "location",
+            "settings": {
+              "name": "Abu Dhabi"
+            }
+          },
+          "camp1": {
+            "type": "campaign",
+            "settings": {
+              "label": "Offers",
+              "link": "/collections/all/offers",
+              "highlight": true
+            }
+          },
+          "camp2": {
+            "type": "campaign",
+            "settings": {
+              "label": "Last Chance",
+              "link": "/collections/all/last-chance",
+              "highlight": false
+            }
+          },
+          "camp3": {
+            "type": "campaign",
+            "settings": {
+              "label": "New",
+              "link": "/collections/all/new-arrivals",
+              "highlight": false
+            }
+          },
+          "camp4": {
+            "type": "campaign",
+            "settings": {
+              "label": "Gift Cards",
+              "link": "/collections/gifting-accessories",
+              "highlight": false
+            }
+          }
+        },
+        "block_order": [
+          "loc1",
+          "loc2",
+          "camp1",
+          "camp2",
+          "camp3",
+          "camp4"
+        ],
+        "settings": {
+          "search_placeholder": "Search products, brands and categories",
+          "show_campaign_rail": true,
+          "location_heading": "Where are we delivering?",
+          "location_text": "Choose your area to view the most relevant availability and delivery information."
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "settings": {
+          "brand_text": "Premium drinks, simple shopping and convenient delivery.",
+          "show_app_banner": false,
+          "app_heading": "Your favourites, one tap away",
+          "app_text": "Add your mobile app links when ready, or disable this banner.",
+          "bottom_text": "Please enjoy responsibly. 21+ and local eligibility rules apply."
+        },
+        "blocks": {},
+        "block_order": []
+      },
+      "age-license-gate": {
+        "type": "age-license-gate",
+        "settings": {
+          "enabled": true,
+          "mode": "once",
+          "eyebrow": "Welcome",
+          "heading": "Are you 21 or older?",
+          "text": "Please confirm that you meet the age and eligibility requirements that apply to your purchase.",
+          "check_1": "I am of legal purchasing age.",
+          "check_2": "I meet any licence or permit requirement applicable to my order.",
+          "confirm_label": "I confirm \u2014 enter store",
+          "exit_label": "Exit",
+          "footnote": "Configure this wording for your jurisdiction before launch.",
+          "aside_heading": "Know before you buy",
+          "aside_text": "Use this area for your licence, delivery-area and responsible-retailing information.",
+          "aside_button_label": "Learn more"
+        }
+      }
+    }
+  },
+  "presets": {
+    "Default": {}
+  }
+}

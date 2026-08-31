@@ -1,0 +1,28 @@
+<section class="collection-page">
+  <div class="page-width">
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="{{ routes.root_url }}">Home</a><span>/</span><span>{{ collection.title }}</span></nav>
+    <header class="collection-header"><div><h1>{{ collection.title }}</h1><div class="collection-meta">{{ collection.products_count }} products</div></div>{% if collection.description != blank %}<div class="collection-description rte">{{ collection.description }}</div>{% endif %}</header>
+
+    {% assign active_filter_count = 0 %}{% for filter in collection.filters %}{% assign active_filter_count = active_filter_count | plus:filter.active_values.size %}{% if filter.type == 'price_range' %}{% if filter.min_value.value or filter.max_value.value %}{% assign active_filter_count = active_filter_count | plus:1 %}{% endif %}{% endif %}{% endfor %}
+    {% if active_filter_count > 0 %}<div class="active-filters">{% for filter in collection.filters %}{% for value in filter.active_values %}<a href="{{ value.url_to_remove }}" class="active-chip">{{ value.label }} ×</a>{% endfor %}{% if filter.type == 'price_range' %}{% if filter.min_value.value or filter.max_value.value %}<a href="{{ filter.url_to_remove }}" class="active-chip">Price ×</a>{% endif %}{% endif %}{% endfor %}<a class="active-clear" href="{{ collection.url }}">Clear all</a></div>{% endif %}
+
+    <div class="collection-toolbar">
+      <button class="filter-button" data-open-drawer="#FiltersDrawer">{% render 'icon', name:'filter', size:18 %}Filters{% if active_filter_count > 0 %}<span>{{ active_filter_count }}</span>{% endif %}</button>
+      <div class="collection-toolbar__count">{{ collection.products_count }} items</div>
+      <label class="sort-wrap"><span>Sort by</span><select data-sort-by aria-label="Sort products">{% assign sort_by = collection.sort_by | default:collection.default_sort_by %}{% for option in collection.sort_options %}<option value="{{ option.value | escape }}"{% if option.value == sort_by %} selected{% endif %}>{{ option.name | escape }}</option>{% endfor %}</select></label>
+    </div>
+
+    {% paginate collection.products by section.settings.products_per_page %}
+      <div class="collection-layout">
+        <aside class="facets" aria-label="Product filters"><div class="facets__head"><strong>Filters</strong>{% if active_filter_count > 0 %}<span>{{ active_filter_count }} active</span>{% endif %}</div>{% render 'facets-form', results:collection, id_prefix:'desktop' %}</aside>
+        <div class="collection-products">
+          {% if collection.products.size > 0 %}<div class="product-grid">{% for product in collection.products %}{% render 'product-card', product:product %}{% endfor %}</div>
+            {% if paginate.pages > 1 %}<nav class="pagination" aria-label="Pagination">{% if paginate.previous %}<a href="{{ paginate.previous.url }}" aria-label="Previous">‹</a>{% endif %}{% for part in paginate.parts %}{% if part.is_link %}<a href="{{ part.url }}">{{ part.title }}</a>{% else %}<span{% if part.title == paginate.current_page %} class="current"{% endif %}>{{ part.title }}</span>{% endif %}{% endfor %}{% if paginate.next %}<a href="{{ paginate.next.url }}" aria-label="Next">›</a>{% endif %}</nav>{% endif %}
+          {% else %}<div class="empty-state"><h2>No products found</h2><p>Try clearing a filter or browsing another category.</p><a class="btn" href="{{ collection.url }}">Clear filters</a></div>{% endif %}
+        </div>
+      </div>
+    {% endpaginate %}
+  </div>
+</section>
+<aside id="FiltersDrawer" class="filters-drawer" aria-label="Filters" aria-hidden="true"><div class="drawer-head"><div><small>Refine</small><strong>Filters</strong></div><button class="icon-btn" data-close-drawer aria-label="Close filters">{% render 'icon', name:'close' %}</button></div><div class="filters-drawer__body">{% render 'facets-form', results:collection, id_prefix:'mobile' %}</div></aside>
+{% schema %}{"name":"Collection product grid","settings":[{"type":"range","id":"products_per_page","min":12,"max":48,"step":4,"label":"Products per page","default":24}]}{% endschema %}

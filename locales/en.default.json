@@ -1,0 +1,7 @@
+{
+  "general": {
+    "search": {"search":"Search","placeholder":"Search products, brands and categories"},
+    "cart": {"cart":"Cart"}
+  },
+  "products": {"product":{"add_to_cart":"Add to cart","sold_out":"Sold out","unavailable":"Unavailable"}}
+}

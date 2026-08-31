@@ -1,0 +1,23 @@
+<form action="{{ results.url }}" method="get" class="facets-form">
+  {% if results.terms %}<input type="hidden" name="q" value="{{ results.terms | escape }}">{% endif %}
+  {% if results.sort_by %}<input type="hidden" name="sort_by" value="{{ results.sort_by }}">{% endif %}
+  {% for filter in results.filters %}
+    <details class="facet"{% if filter.active_values.size > 0 or forloop.index <= 3 %} open{% endif %}>
+      <summary><span>{{ filter.label }}</span><span class="facet__count">{% if filter.active_values.size > 0 %}{{ filter.active_values.size }}{% endif %}{% render 'icon', name:'chevron', size:15 %}</span></summary>
+      <div class="facet__body">
+        {% case filter.type %}
+          {% when 'list', 'boolean' %}
+            {% for value in filter.values %}
+              <label class="facet__item{% if value.count == 0 and value.active == false %} is-disabled{% endif %}" for="Filter-{{ id_prefix }}-{{ filter.param_name | handle }}-{{ forloop.index }}">
+                <input id="Filter-{{ id_prefix }}-{{ filter.param_name | handle }}-{{ forloop.index }}" type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %}>
+                <span class="facet-check"></span><span class="facet-label">{{ value.label }}</span><small>{{ value.count }}</small>
+              </label>
+            {% endfor %}
+          {% when 'price_range' %}
+            <div class="price-range"><label><span>Min</span><input name="{{ filter.min_value.param_name }}" type="number" min="0" placeholder="0"{% if filter.min_value.value %} value="{{ filter.min_value.value | money_without_currency | replace:',','' }}"{% endif %}></label><label><span>Max</span><input name="{{ filter.max_value.param_name }}" type="number" min="0" placeholder="{{ filter.range_max | money_without_currency | replace:',','' }}"{% if filter.max_value.value %} value="{{ filter.max_value.value | money_without_currency | replace:',','' }}"{% endif %}></label></div>
+        {% endcase %}
+      </div>
+    </details>
+  {% endfor %}
+  <div class="facets__actions"><button type="submit" class="btn btn--full">Apply filters</button><a class="btn btn--outline btn--full" href="{{ results.url }}">Clear all</a></div>
+</form>

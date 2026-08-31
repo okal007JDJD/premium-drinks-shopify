@@ -1,0 +1,39 @@
+<footer class="site-footer">
+  {% if section.settings.show_app_banner %}
+    <div class="footer-app"><div class="page-width footer-app__inner"><div><span class="footer-app__kicker">Shop on the go</span><h2>{{ section.settings.app_heading }}</h2><p>{{ section.settings.app_text }}</p></div><div class="footer-app__buttons">{% if section.settings.app_store_link != blank %}<a class="store-badge" href="{{ section.settings.app_store_link }}"><small>Download on the</small><strong>App Store</strong></a>{% endif %}{% if section.settings.play_store_link != blank %}<a class="store-badge" href="{{ section.settings.play_store_link }}"><small>GET IT ON</small><strong>Google Play</strong></a>{% endif %}</div></div></div>
+  {% endif %}
+  <div class="page-width footer-main">
+    <div class="footer-brand">
+      <a class="brand" href="{{ routes.root_url }}">{% if settings.logo != blank %}{{ settings.logo | image_url:width:340 | image_tag:alt:shop.name }}{% else %}<span class="brand__text">{{ settings.logo_text | default:shop.name }}</span>{% endif %}</a>
+      <p>{{ section.settings.brand_text }}</p>
+      <div class="footer-contact"><a href="tel:{{ settings.customer_service_phone | remove:' ' }}">{{ settings.customer_service_phone }}</a><a href="mailto:{{ settings.customer_service_email }}">{{ settings.customer_service_email }}</a></div>
+      <div class="footer-social">{% if section.settings.instagram != blank %}<a href="{{ section.settings.instagram }}" aria-label="Instagram">{% render 'icon', name:'instagram', size:18 %}</a>{% endif %}{% if section.settings.facebook != blank %}<a href="{{ section.settings.facebook }}" aria-label="Facebook">{% render 'icon', name:'facebook', size:17 %}</a>{% endif %}{% if section.settings.tiktok != blank %}<a href="{{ section.settings.tiktok }}" aria-label="TikTok">{% render 'icon', name:'tiktok', size:18 %}</a>{% endif %}</div>
+    </div>
+    {% if section.blocks.size > 0 %}
+      {% for block in section.blocks %}<div class="footer-column" {{ block.shopify_attributes }}><h3>{{ block.settings.heading }}</h3>{% if block.settings.menu != blank %}{% for link in block.settings.menu.links %}<a href="{{ link.url }}">{{ link.title }}</a>{% endfor %}{% else %}{% if block.settings.link_1_text != blank %}<a href="{{ block.settings.link_1_url }}">{{ block.settings.link_1_text }}</a>{% endif %}{% if block.settings.link_2_text != blank %}<a href="{{ block.settings.link_2_url }}">{{ block.settings.link_2_text }}</a>{% endif %}{% if block.settings.link_3_text != blank %}<a href="{{ block.settings.link_3_url }}">{{ block.settings.link_3_text }}</a>{% endif %}{% endif %}</div>{% endfor %}
+    {% else %}
+      <div class="footer-column"><h3>Shop & Explore</h3><a href="{{ routes.all_products_collection_url }}">Shop all</a><a href="/collections/all/offers">Offers</a><a href="/collections/gifting-accessories-accessories">Gift Cards</a></div>
+      <div class="footer-column"><h3>Know Before You Buy</h3><a href="/pages/licensing-information">Licensing information</a><a href="/pages/delivery-information">Delivery information</a><a href="/pages/responsible-retailing">Responsible retailing</a></div>
+      <div class="footer-column"><h3>Discover</h3><a href="/collections/all/new-arrivals">New arrivals</a><a href="/blogs/news">Blog</a><a href="/pages/about-us">Our story</a></div>
+      <div class="footer-column"><h3>Help & Support</h3><a href="/pages/faqs">FAQs</a><a href="/pages/contact">Contact us</a><a href="/policies/privacy-policy">Privacy policy</a></div>
+    {% endif %}
+  </div>
+  <div class="page-width footer-bottom"><span>© {{ 'now' | date:'%Y' }} {{ shop.name }}. All rights reserved.</span><span>{{ section.settings.bottom_text }}</span></div>
+</footer>
+{% schema %}
+{
+  "name":"Footer",
+  "settings":[
+    {"type":"textarea","id":"brand_text","label":"Brand text","default":"Premium drinks, simple shopping and convenient delivery."},
+    {"type":"url","id":"instagram","label":"Instagram"},{"type":"url","id":"facebook","label":"Facebook"},{"type":"url","id":"tiktok","label":"TikTok"},
+    {"type":"checkbox","id":"show_app_banner","label":"Show app banner","default":true},
+    {"type":"text","id":"app_heading","label":"App heading","default":"Your favourites, one tap away"},
+    {"type":"text","id":"app_text","label":"App text","default":"Add your mobile app links when ready, or disable this banner."},
+    {"type":"url","id":"app_store_link","label":"App Store link"},{"type":"url","id":"play_store_link","label":"Google Play link"},
+    {"type":"text","id":"bottom_text","label":"Bottom text","default":"Please enjoy responsibly. 21+ and local eligibility rules apply."}
+  ],
+  "blocks":[{"type":"links","name":"Link column","settings":[{"type":"text","id":"heading","label":"Heading","default":"Shop & Explore"},{"type":"link_list","id":"menu","label":"Menu"},{"type":"text","id":"link_1_text","label":"Fallback link 1","default":"Gift Cards"},{"type":"url","id":"link_1_url","label":"Link 1 URL"},{"type":"text","id":"link_2_text","label":"Fallback link 2","default":"Stores"},{"type":"url","id":"link_2_url","label":"Link 2 URL"},{"type":"text","id":"link_3_text","label":"Fallback link 3","default":"FAQs"},{"type":"url","id":"link_3_url","label":"Link 3 URL"}]}],
+  "max_blocks":4,
+  "presets":[{"name":"Footer","blocks":[{"type":"links"},{"type":"links","settings":{"heading":"Know Before You Buy","link_1_text":"Licensing information","link_2_text":"Delivery information","link_3_text":"Responsible retailing"}},{"type":"links","settings":{"heading":"Discover","link_1_text":"Offers","link_2_text":"Our story","link_3_text":"Blog"}},{"type":"links","settings":{"heading":"Help & Support","link_1_text":"FAQs","link_2_text":"Contact us","link_3_text":"Terms & Privacy"}}]}]
+}
+{% endschema %}

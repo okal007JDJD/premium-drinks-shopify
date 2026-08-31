@@ -1,0 +1,14 @@
+<section class="search-page page-width">
+  <h1>Search</h1>
+  <form class="search-form" action="{{ routes.search_url }}" method="get"><input type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search products, brands and categories"><button class="btn" type="submit">Search</button></form>
+  {% if search.performed %}
+    <p style="color:#777">{{ search.results_count }} results for “{{ search.terms }}”</p>
+    {% paginate search.results by 20 %}
+      <div class="product-grid">
+        {% for item in search.results %}{% if item.object_type == 'product' %}{% render 'product-card', product:item %}{% endif %}{% endfor %}
+      </div>
+      {% if paginate.pages > 1 %}<nav class="pagination">{% for part in paginate.parts %}{% if part.is_link %}<a href="{{ part.url }}">{{ part.title }}</a>{% else %}<span{% if part.title == paginate.current_page %} class="current"{% endif %}>{{ part.title }}</span>{% endif %}{% endfor %}</nav>{% endif %}
+    {% endpaginate %}
+  {% endif %}
+</section>
+{% schema %}{"name":"Search results","settings":[]}{% endschema %}

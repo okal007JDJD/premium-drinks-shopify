@@ -1,0 +1,40 @@
+{% liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign on_sale = false
+  if current_variant.compare_at_price > current_variant.price
+    assign on_sale = true
+  endif
+%}
+<article class="product-card" data-product-card>
+  <a class="product-card__media" href="{{ product.url }}">
+    <div class="product-card__badges">
+      {% for tag in product.tags %}
+        {% assign down = tag | downcase %}
+        {% if down contains 'badge:' %}<span class="pill{% if down contains 'last chance' %} pill--dark{% elsif down contains 'free gift' %} pill--gold{% endif %}">{{ tag | split:':' | last | strip }}</span>{% endif %}
+      {% endfor %}
+      {% if product.tags contains 'New' %}<span class="pill pill--dark">New</span>{% endif %}
+      {% if product.tags contains 'Best Seller' %}<span class="pill">Our Pick</span>{% endif %}
+    </div>
+    {% if product.featured_media %}
+      {{ product.featured_media | image_url: width: 760 | image_tag: loading:'lazy', widths:'220,320,440,600,760', sizes:'(max-width:640px) 47vw, (max-width:1000px) 31vw, 19vw', alt:product.featured_media.alt }}
+    {% else %}{{ 'product-1' | placeholder_svg_tag:'placeholder-svg' }}{% endif %}
+    {% if product.media.size > 1 and product.media[1].media_type == 'image' %}<div class="product-card__second">{{ product.media[1] | image_url:width:760 | image_tag:loading:'lazy', alt:product.media[1].alt }}</div>{% endif %}
+  </a>
+  <div class="product-card__body">
+    {% if product.vendor != blank %}<div class="product-card__vendor">{{ product.vendor }}</div>{% endif %}
+    <h3 class="product-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+    {% unless product.has_only_default_variant %}<div class="product-card__variant">{{ current_variant.title }}</div>{% endunless %}
+    {% if current_variant.inventory_management and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= 5 %}<p class="stock-note">Only {{ current_variant.inventory_quantity }} left in stock</p>{% endif %}
+    <div class="price">
+      {% if on_sale %}<span class="price__compare">{{ current_variant.compare_at_price | money }}</span>{% endif %}
+      <span class="price__current">{% if settings.show_currency_code %}{{ current_variant.price | money_with_currency }}{% else %}{{ current_variant.price | money }}{% endif %}</span>
+      {% if on_sale %}{% assign saving = current_variant.compare_at_price | minus:current_variant.price | times:100.0 | divided_by:current_variant.compare_at_price | round %}<span class="price__save">{{ saving }}% Off</span>{% endif %}
+    </div>
+    <div class="quick-add">
+      {% if product.available and product.has_only_default_variant %}
+        {% form 'product', product, class:'quick-add-form' %}<input type="hidden" name="id" value="{{ current_variant.id }}"><input type="hidden" name="quantity" value="1"><button type="submit" class="quick-add-button">Add to cart</button>{% endform %}
+      {% elsif product.available %}<a class="quick-add-button quick-add-button--outline" href="{{ product.url }}">Choose options</a>
+      {% else %}<button class="quick-add-button" disabled>Sold out</button>{% endif %}
+    </div>
+  </div>
+</article>

@@ -1,0 +1,160 @@
+{% liquid
+  assign threshold = settings.free_delivery_threshold | plus: 0
+  assign remaining = threshold | minus: cart.total_price
+  if remaining < 0
+    assign remaining = 0
+  endif
+%}
+<header class="site-header" data-site-header>
+  <div class="header-main page-width">
+    <button class="icon-btn mobile-menu-btn" aria-label="Open menu" data-open-drawer="#MobileMenu">{% render 'icon', name: 'menu' %}</button>
+
+    <a class="brand" href="{{ routes.root_url }}" aria-label="{{ shop.name }} home">
+      {% if settings.logo != blank %}
+        {{ settings.logo | image_url: width: 420 | image_tag: widths: '120,180,240,320,420', sizes:'180px', alt: shop.name }}
+      {% else %}
+        <span class="brand__text">{{ settings.logo_text | default: shop.name }}</span>
+      {% endif %}
+    </a>
+
+    <form class="search-box" action="{{ routes.search_url }}" method="get" role="search" data-predictive-search>
+      <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ section.settings.search_placeholder }}" aria-label="Search" autocomplete="off" data-search-input>
+      <button type="submit" aria-label="Search">{% render 'icon', name: 'search' %}</button>
+      <div class="predictive-results" data-search-results hidden></div>
+    </form>
+
+    <div class="header-actions">
+      <button class="location-btn" data-open-modal="#LocationModal" aria-label="Choose delivery location">
+        {% render 'icon', name: 'pin', size: 18 %}<span class="location-btn__copy"><small>Deliver to</small><strong data-location-label>{{ settings.default_location }}</strong></span>{% render 'icon', name:'chevron', size:15 %}
+      </button>
+      {% if shop.customer_accounts_enabled %}<a class="icon-btn account-btn" href="{{ routes.account_url }}" aria-label="Account">{% render 'icon', name: 'user' %}</a>{% endif %}
+      <button class="icon-btn cart-icon-btn" data-open-drawer="#CartDrawer" aria-label="Open cart">
+        {% render 'icon', name: 'cart' %}<span class="badge-count{% if cart.item_count == 0 %} is-empty{% endif %}">{{ cart.item_count }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="header-nav-wrap">
+    <nav class="header-nav page-width" aria-label="Main navigation">
+      {% if section.settings.menu != blank %}
+        {% for link in section.settings.menu.links %}
+          {% if link.links != blank %}
+            <div class="nav-item nav-item--mega">
+              <a href="{{ link.url }}">{{ link.title }} {% render 'icon', name:'chevron', size:14 %}</a>
+              <div class="mega-menu">
+                <div class="page-width mega-menu__inner">
+                  <div class="mega-menu__lead"><span>{{ link.title }}</span><a href="{{ link.url }}">Shop all {{ link.title }}</a></div>
+                  <div class="mega-menu__links">
+                    {% for child in link.links %}
+                      <div class="mega-menu__group">
+                        <a class="mega-menu__title" href="{{ child.url }}">{{ child.title }}</a>
+                        {% for grandchild in child.links limit:8 %}<a href="{{ grandchild.url }}">{{ grandchild.title }}</a>{% endfor %}
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <a class="nav-item{% if link.title contains 'Offer' or link.title contains 'Last Chance' %} nav-offer{% endif %}" href="{{ link.url }}">{{ link.title }}</a>
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <a class="nav-item" href="/collections/wine">Wine</a><a class="nav-item" href="/collections/spirits-mixers">Spirits & Mixers</a><a class="nav-item" href="/collections/beer-cider">Beer & Cider</a><a class="nav-item" href="/collections/sparkling">Sparkling</a><a class="nav-item" href="/collections/ready-to-drink">Ready to Drink</a><a class="nav-item" href="/collections/gifting-accessories-accessories">Gifting & Accessories</a><a class="nav-item" href="/collections/snacks">Snacks</a><a class="nav-item" href="/collections/drink-dry">Drink Dry</a>
+      {% endif %}
+    </nav>
+  </div>
+
+  {% if section.settings.show_campaign_rail %}
+    <div class="campaign-rail-wrap">
+      <div class="campaign-rail page-width" aria-label="Featured links">
+        {% assign has_campaign = false %}
+        {% for block in section.blocks %}{% if block.type == 'campaign' %}{% assign has_campaign = true %}<a href="{{ block.settings.link | default: routes.all_products_collection_url }}" class="campaign-link{% if block.settings.highlight %} is-highlight{% endif %}" {{ block.shopify_attributes }}>{{ block.settings.label }}</a>{% endif %}{% endfor %}
+        {% unless has_campaign %}<a class="campaign-link is-highlight" href="/collections/all/offers">Offers</a><a class="campaign-link" href="/collections/all/last-chance">Last Chance</a><a class="campaign-link" href="/collections/gifting-accessories-accessories">Gift Cards</a><a class="campaign-link" href="/collections/all/new-arrivals">New</a>{% endunless %}
+      </div>
+    </div>
+  {% endif %}
+</header>
+
+<aside id="MobileMenu" class="mobile-drawer" aria-label="Mobile menu" aria-hidden="true">
+  <div class="drawer-head">
+    <a class="brand" href="{{ routes.root_url }}">{% if settings.logo != blank %}{{ settings.logo | image_url:width:280 | image_tag:alt:shop.name }}{% else %}<span class="brand__text">{{ settings.logo_text | default:shop.name }}</span>{% endif %}</a>
+    <button class="icon-btn" data-close-drawer aria-label="Close menu">{% render 'icon', name: 'close' %}</button>
+  </div>
+  <div class="mobile-menu-scroll">
+    <form class="search-box mobile-search" action="{{ routes.search_url }}" method="get" role="search" data-predictive-search>
+      <input type="search" name="q" placeholder="{{ section.settings.search_placeholder }}" aria-label="Search" autocomplete="off" data-search-input><button type="submit" aria-label="Search">{% render 'icon', name:'search' %}</button><div class="predictive-results" data-search-results hidden></div>
+    </form>
+    <button class="mobile-location" data-open-modal="#LocationModal">{% render 'icon', name:'pin', size:19 %}<span><small>Deliver to</small><strong data-location-label>{{ settings.default_location }}</strong></span>{% render 'icon', name:'chevron', size:18 %}</button>
+    <nav class="mobile-nav">
+      {% if section.settings.menu != blank %}
+        {% for link in section.settings.menu.links %}
+          {% if link.links != blank %}
+            <details class="mobile-nav-group"><summary><span>{{ link.title }}</span>{% render 'icon', name:'chevron', size:18 %}</summary><div class="mobile-subnav"><a class="mobile-subnav__all" href="{{ link.url }}">Shop all {{ link.title }}</a>{% for child in link.links %}<a href="{{ child.url }}">{{ child.title }}</a>{% endfor %}</div></details>
+          {% else %}<a href="{{ link.url }}"><span>{{ link.title }}</span>{% render 'icon', name:'chevron', size:18 %}</a>{% endif %}
+        {% endfor %}
+      {% else %}
+        <a href="/collections/wine"><span>Wine</span>{% render 'icon', name:'chevron', size:18 %}</a><a href="/collections/spirits-mixers"><span>Spirits & Mixers</span>{% render 'icon', name:'chevron', size:18 %}</a><a href="/collections/beer-cider"><span>Beer & Cider</span>{% render 'icon', name:'chevron', size:18 %}</a><a href="/collections/sparkling"><span>Sparkling</span>{% render 'icon', name:'chevron', size:18 %}</a><a href="/collections/all/offers"><span>Offers</span>{% render 'icon', name:'chevron', size:18 %}</a>
+      {% endif %}
+    </nav>
+    <div class="mobile-campaigns">{% for block in section.blocks %}{% if block.type == 'campaign' %}<a href="{{ block.settings.link | default: routes.all_products_collection_url }}">{{ block.settings.label }}</a>{% endif %}{% endfor %}</div>
+    {% if shop.customer_accounts_enabled %}<a class="btn btn--outline btn--full" href="{{ routes.account_url }}">My account</a>{% endif %}
+  </div>
+</aside>
+
+<aside id="CartDrawer" class="cart-drawer" aria-label="Cart drawer" aria-hidden="true">
+  <div class="cart-drawer__head"><div><small>Your basket</small><strong>{{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %}</strong></div><button class="icon-btn" data-close-drawer aria-label="Close cart">{% render 'icon', name:'close' %}</button></div>
+  {% if threshold > 0 %}
+    <div class="delivery-progress">
+      {% if cart.item_count == 0 %}<p>Add products to start your order.</p>
+      {% elsif remaining > 0 %}<p>You’re <strong>{{ remaining | money }}</strong> away from the delivery threshold.</p>
+      {% else %}<p><strong>Delivery threshold reached.</strong></p>{% endif %}
+      {% assign pct = cart.total_price | times:100.0 | divided_by:threshold | at_most:100 %}<div class="delivery-progress__bar"><span style="width:{{ pct }}%"></span></div>
+    </div>
+  {% endif %}
+  <div class="cart-drawer__body">
+    {% if cart.item_count == 0 %}
+      <div class="empty-state"><div class="empty-state__icon">{% render 'icon', name:'cart', size:34 %}</div><h2>Your cart is empty</h2><p>Browse offers and customer favourites.</p><a href="{{ routes.all_products_collection_url }}" class="btn">Start shopping</a></div>
+    {% else %}
+      {% for item in cart.items %}
+        <div class="mini-cart-item">
+          <a href="{{ item.url }}" class="mini-cart-item__image">{% if item.image %}{{ item.image | image_url:width:180 | image_tag:loading:'lazy', alt:item.product.title }}{% endif %}</a>
+          <div class="mini-cart-item__details"><a class="mini-cart-item__title" href="{{ item.url }}">{{ item.product.title }}</a>{% unless item.product.has_only_default_variant %}<span>{{ item.variant.title }}</span>{% endunless %}<div class="mini-cart-item__meta">Qty {{ item.quantity }} · <a href="{{ item.url_to_remove }}">Remove</a></div></div>
+          <div class="mini-cart-item__price">{{ item.final_line_price | money }}</div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+  {% if cart.item_count > 0 %}<div class="cart-drawer__foot"><div class="cart-subtotal"><span>Subtotal</span><strong>{{ cart.total_price | money_with_currency }}</strong></div><p>Taxes and delivery fees are calculated at checkout.</p><a class="btn btn--outline btn--full" href="{{ routes.cart_url }}">View cart</a><form action="{{ routes.cart_url }}" method="post"><button class="btn btn--dark btn--full" type="submit" name="checkout">Checkout</button></form></div>{% endif %}
+</aside>
+
+<div id="LocationModal" class="modal-shell" role="dialog" aria-modal="true" aria-label="Choose delivery location" aria-hidden="true">
+  <div class="modal-card location-modal">
+    <button class="icon-btn modal-card__close" data-close-modal aria-label="Close">{% render 'icon', name:'close' %}</button>
+    <span class="modal-kicker">Delivery area</span><h2>{{ section.settings.location_heading }}</h2><p>{{ section.settings.location_text }}</p>
+    <div class="location-list">
+      {% assign has_location = false %}{% for block in section.blocks %}{% if block.type == 'location' %}{% assign has_location = true %}<button class="location-option" data-location-choice="{{ block.settings.name }}" {{ block.shopify_attributes }}><span>{% render 'icon', name:'pin', size:18 %}{{ block.settings.name }}</span>{% render 'icon', name:'chevron', size:17 %}</button>{% endif %}{% endfor %}
+      {% unless has_location %}<button class="location-option" data-location-choice="Dubai"><span>{% render 'icon', name:'pin', size:18 %}Dubai</span>{% render 'icon', name:'chevron', size:17 %}</button><button class="location-option" data-location-choice="Abu Dhabi"><span>{% render 'icon', name:'pin', size:18 %}Abu Dhabi</span>{% render 'icon', name:'chevron', size:17 %}</button>{% endunless %}
+    </div>
+    <p class="location-modal__note">Availability, delivery windows and legal requirements can vary by location.</p>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name":"Header",
+  "settings":[
+    {"type":"link_list","id":"menu","label":"Main menu"},
+    {"type":"text","id":"search_placeholder","label":"Search placeholder","default":"Search products, brands and categories"},
+    {"type":"checkbox","id":"show_campaign_rail","label":"Show campaign rail","default":true},
+    {"type":"text","id":"location_heading","label":"Location modal heading","default":"Where are we delivering?"},
+    {"type":"textarea","id":"location_text","label":"Location modal text","default":"Choose your area to view the most relevant availability and delivery information."}
+  ],
+  "blocks":[
+    {"type":"location","name":"Location","settings":[{"type":"text","id":"name","label":"Name","default":"Dubai"}]},
+    {"type":"campaign","name":"Campaign link","settings":[{"type":"text","id":"label","label":"Label","default":"Offers"},{"type":"url","id":"link","label":"Link"},{"type":"checkbox","id":"highlight","label":"Highlight","default":false}]}
+  ],
+  "max_blocks":16,
+  "presets":[{"name":"Header","blocks":[{"type":"location"},{"type":"location","settings":{"name":"Abu Dhabi"}},{"type":"campaign","settings":{"label":"Offers","highlight":true}},{"type":"campaign","settings":{"label":"Last Chance"}},{"type":"campaign","settings":{"label":"Gift Cards"}}]}]
+}
+{% endschema %}

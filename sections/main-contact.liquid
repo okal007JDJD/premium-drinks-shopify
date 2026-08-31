@@ -1,0 +1,18 @@
+<section class="section page-width narrow-page">
+  <nav class="breadcrumbs"><a href="{{ routes.root_url }}">Home</a><span>/</span><span>{{ page.title }}</span></nav>
+  <header class="info-hero"><span class="modal-kicker">Help & support</span><h1>{{ page.title }}</h1><p>{{ section.settings.intro }}</p></header>
+  <div class="contact-layout">
+    <div class="contact-card"><h2>Contact details</h2><p><strong>Phone</strong><br><a href="tel:{{ settings.customer_service_phone | remove:' ' }}">{{ settings.customer_service_phone }}</a></p><p><strong>Email</strong><br><a href="mailto:{{ settings.customer_service_email }}">{{ settings.customer_service_email }}</a></p><p><strong>Hours</strong><br>{{ section.settings.hours }}</p></div>
+    <div class="contact-form-card">
+      {% form 'contact' %}
+        {% if form.posted_successfully? %}<div class="form-success">Thanks — your message has been sent.</div>{% endif %}
+        {{ form.errors | default_errors }}
+        <div class="field-grid"><label>Name<input type="text" name="contact[name]" autocomplete="name"></label><label>Email<input type="email" name="contact[email]" autocomplete="email" required></label></div>
+        <label>Phone<input type="tel" name="contact[phone]" autocomplete="tel"></label>
+        <label>Message<textarea name="contact[body]" rows="7" required></textarea></label>
+        <button class="btn" type="submit">Send message</button>
+      {% endform %}
+    </div>
+  </div>
+</section>
+{% schema %}{"name":"Contact page","settings":[{"type":"textarea","id":"intro","label":"Intro","default":"Questions about products, delivery or an existing order? Our team is here to help."},{"type":"text","id":"hours","label":"Support hours","default":"Daily, 10:00 AM – 10:00 PM"}]}{% endschema %}
