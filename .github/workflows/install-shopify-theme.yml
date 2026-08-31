@@ -14,17 +14,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install theme files when package exists
+      - name: Install theme files when all package parts exist
         shell: bash
         run: |
           set -euo pipefail
-          if [ ! -f theme-package.b64 ]; then
-            echo "No theme-package.b64 found; nothing to install."
+          count=$(find . -maxdepth 1 -name 'theme-package.part*' | wc -l | tr -d ' ')
+          if [ "$count" -lt 5 ]; then
+            echo "Waiting for all 5 package parts; found $count."
             exit 0
           fi
-          base64 -d theme-package.b64 > /tmp/shopify-theme.zip
+          cat theme-package.part01 theme-package.part02 theme-package.part03 theme-package.part04 theme-package.part05 > /tmp/theme-package.b64
+          base64 -d /tmp/theme-package.b64 > /tmp/shopify-theme.zip
           unzip -oq /tmp/shopify-theme.zip -d .
-          rm -f theme-package.b64 /tmp/shopify-theme.zip
+          rm -f theme-package.part01 theme-package.part02 theme-package.part03 theme-package.part04 theme-package.part05 /tmp/theme-package.b64 /tmp/shopify-theme.zip
 
       - name: Commit installed theme
         shell: bash
