@@ -1,0 +1,5 @@
+.product-media--single{grid-template-columns:minmax(0,1fr)}
+.product-media--single .product-main-media{width:100%;min-height:620px;aspect-ratio:auto;background:#fafafa}
+.product-media--single .product-main-media img{width:100%;height:620px;object-fit:contain;object-position:center;padding:28px}
+@media(max-width:980px){.product-media--single .product-main-media{min-height:520px}.product-media--single .product-main-media img{height:520px}}
+@media(max-width:640px){.product-media--single .product-main-media{min-height:420px}.product-media--single .product-main-media img{height:420px;padding:16px}}
