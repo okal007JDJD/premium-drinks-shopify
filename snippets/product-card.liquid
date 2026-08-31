@@ -4,37 +4,84 @@
   if current_variant.compare_at_price > current_variant.price
     assign on_sale = true
   endif
+  assign saving = 0
+  if on_sale
+    assign saving = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round
+  endif
+  assign is_last_chance = false
+  assign is_le_clos = false
+  for tag in product.tags
+    assign down = tag | downcase
+    if down == 'last-chance' or down == 'last chance' or down contains 'badge:last chance'
+      assign is_last_chance = true
+    endif
+    if down == 'le-clos' or down == 'le clos' or down contains 'badge:le clos'
+      assign is_le_clos = true
+    endif
+  endfor
 %}
-<article class="product-card" data-product-card>
-  <a class="product-card__media" href="{{ product.url }}">
-    <div class="product-card__badges">
+
+<article class="product-card reference-product-card" data-product-card data-product-id="{{ product.id }}">
+  <div class="reference-card__media-wrap">
+    <div class="reference-card__badges" aria-hidden="true">
+      {% if is_le_clos %}<span class="reference-badge reference-badge--clos">Le Clos</span>{% endif %}
+      {% if is_last_chance %}<span class="reference-badge reference-badge--last">Last Chance</span>{% endif %}
       {% for tag in product.tags %}
         {% assign down = tag | downcase %}
-        {% if down contains 'badge:' %}<span class="pill{% if down contains 'last chance' %} pill--dark{% elsif down contains 'free gift' %} pill--gold{% endif %}">{{ tag | split:':' | last | strip }}</span>{% endif %}
+        {% if down contains 'badge:' and down contains 'last chance' == false and down contains 'le clos' == false %}
+          {% assign badge_text = tag | split: ':' | last | strip %}
+          {% assign badge_class = '' %}
+          {% if down contains 'free gift' %}{% assign badge_class = ' reference-badge--gift' %}{% elsif down contains 'new' %}{% assign badge_class = ' reference-badge--dark' %}{% endif %}
+          <span class="reference-badge{{ badge_class }}">{{ badge_text }}</span>
+        {% endif %}
       {% endfor %}
-      {% if product.tags contains 'New' %}<span class="pill pill--dark">New</span>{% endif %}
-      {% if product.tags contains 'Best Seller' %}<span class="pill">Our Pick</span>{% endif %}
     </div>
-    {% if product.featured_media %}
-      {{ product.featured_media | image_url: width: 760 | image_tag: loading:'lazy', widths:'220,320,440,600,760', sizes:'(max-width:640px) 47vw, (max-width:1000px) 31vw, 19vw', alt:product.featured_media.alt }}
-    {% else %}{{ 'product-1' | placeholder_svg_tag:'placeholder-svg' }}{% endif %}
-    {% if product.media.size > 1 and product.media[1].media_type == 'image' %}<div class="product-card__second">{{ product.media[1] | image_url:width:760 | image_tag:loading:'lazy', alt:product.media[1].alt }}</div>{% endif %}
-  </a>
-  <div class="product-card__body">
-    {% if product.vendor != blank %}<div class="product-card__vendor">{{ product.vendor }}</div>{% endif %}
-    <h3 class="product-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
-    {% unless product.has_only_default_variant %}<div class="product-card__variant">{{ current_variant.title }}</div>{% endunless %}
-    {% if current_variant.inventory_management and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= 5 %}<p class="stock-note">Only {{ current_variant.inventory_quantity }} left in stock</p>{% endif %}
-    <div class="price">
-      {% if on_sale %}<span class="price__compare">{{ current_variant.compare_at_price | money }}</span>{% endif %}
-      <span class="price__current">{% if settings.show_currency_code %}{{ current_variant.price | money_with_currency }}{% else %}{{ current_variant.price | money }}{% endif %}</span>
-      {% if on_sale %}{% assign saving = current_variant.compare_at_price | minus:current_variant.price | times:100.0 | divided_by:current_variant.compare_at_price | round %}<span class="price__save">{{ saving }}% Off</span>{% endif %}
+
+    <button class="reference-wishlist" type="button" data-wishlist data-product-id="{{ product.id }}" aria-pressed="false" aria-label="Add to wishlist">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <a class="product-card__media reference-card__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+      {% if product.featured_media %}
+        {{ product.featured_media | image_url: width: 640 | image_tag: loading: 'lazy', widths: '220,320,440,560,640', sizes: '(max-width:720px) 70vw, 280px', alt: product.title }}
+      {% else %}
+        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif %}
+    </a>
+  </div>
+
+  <div class="product-card__body reference-card__body">
+    <h3 class="product-card__title reference-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+
+    {% if current_variant.inventory_management and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= 5 %}
+      <p class="reference-card__stock">Only {{ current_variant.inventory_quantity }} left in stock</p>
+    {% else %}
+      <p class="reference-card__stock" aria-hidden="true">&nbsp;</p>
+    {% endif %}
+
+    <div class="reference-card__sale-meta">
+      {% if on_sale %}
+        <span class="reference-card__compare">{{ current_variant.compare_at_price | money }}</span>
+        <span class="reference-card__save">{{ saving }}% Off</span>
+      {% endif %}
     </div>
-    <div class="quick-add">
+
+    <div class="reference-card__footer">
+      <span class="reference-card__price">
+        {% if settings.show_currency_code %}{{ current_variant.price | money_with_currency }}{% else %}{{ current_variant.price | money }}{% endif %}
+      </span>
+
       {% if product.available and product.has_only_default_variant %}
-        {% form 'product', product, class:'quick-add-form' %}<input type="hidden" name="id" value="{{ current_variant.id }}"><input type="hidden" name="quantity" value="1"><button type="submit" class="quick-add-button">Add to cart</button>{% endform %}
-      {% elsif product.available %}<a class="quick-add-button quick-add-button--outline" href="{{ product.url }}">Choose options</a>
-      {% else %}<button class="quick-add-button" disabled>Sold out</button>{% endif %}
+        {% form 'product', product, class: 'reference-card__quick-form' %}
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+          <input type="hidden" name="quantity" value="1">
+          <button type="submit" class="reference-card__add" aria-label="Add {{ product.title | escape }} to cart" title="Add to cart"><span aria-hidden="true">+</span></button>
+        {% endform %}
+      {% elsif product.available %}
+        <a class="reference-card__add reference-card__add--link" href="{{ product.url }}" aria-label="Choose options for {{ product.title | escape }}" title="Choose options"><span aria-hidden="true">+</span></a>
+      {% else %}
+        <button type="button" class="reference-card__add" disabled aria-label="Sold out" title="Sold out"><span aria-hidden="true">+</span></button>
+      {% endif %}
     </div>
   </div>
 </article>
