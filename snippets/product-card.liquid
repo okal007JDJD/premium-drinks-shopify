@@ -28,11 +28,15 @@
       {% if is_last_chance %}<span class="reference-badge reference-badge--last">Last Chance</span>{% endif %}
       {% for tag in product.tags %}
         {% assign down = tag | downcase %}
-        {% if down contains 'badge:' and down contains 'last chance' == false and down contains 'le clos' == false %}
-          {% assign badge_text = tag | split: ':' | last | strip %}
-          {% assign badge_class = '' %}
-          {% if down contains 'free gift' %}{% assign badge_class = ' reference-badge--gift' %}{% elsif down contains 'new' %}{% assign badge_class = ' reference-badge--dark' %}{% endif %}
-          <span class="reference-badge{{ badge_class }}">{{ badge_text }}</span>
+        {% if down contains 'badge:' %}
+          {% unless down contains 'last chance' %}
+            {% unless down contains 'le clos' %}
+              {% assign badge_text = tag | split: ':' | last | strip %}
+              {% assign badge_class = '' %}
+              {% if down contains 'free gift' %}{% assign badge_class = ' reference-badge--gift' %}{% elsif down contains 'new' %}{% assign badge_class = ' reference-badge--dark' %}{% endif %}
+              <span class="reference-badge{{ badge_class }}">{{ badge_text }}</span>
+            {% endunless %}
+          {% endunless %}
         {% endif %}
       {% endfor %}
     </div>
