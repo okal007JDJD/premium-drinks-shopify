@@ -11,9 +11,11 @@
     {% if page_description %}<meta name="description" content="{{ page_description | escape }}">{% endif %}
     {{ content_for_header }}
     {{ 'base.css' | asset_url | stylesheet_tag }}
+    {{ 'reference-product-rail.css' | asset_url | stylesheet_tag }}
     <style>:root{--brand:{{ settings.brand_color }};--brand-dark:{{ settings.brand_dark_color }};--accent:{{ settings.accent_color }};--page-max:{{ settings.page_width }}px;}</style>
     <script>document.documentElement.classList.remove('no-js');window.themeConfig={moneyFormat:{{ shop.money_format | json }},rootUrl:{{ routes.root_url | json }},cartUrl:{{ routes.cart_url | json }},searchUrl:{{ routes.search_url | json }}};</script>
     <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'reference-product-rail.js' | asset_url }}" defer="defer"></script>
   </head>
   <body>
     <a class="skip-link visually-hidden" href="#MainContent">Skip to content</a>
