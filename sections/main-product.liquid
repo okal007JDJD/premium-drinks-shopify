@@ -1,3 +1,4 @@
+{{ 'product-page-fix.css' | asset_url | stylesheet_tag }}
 {% liquid
   assign selected_variant = product.selected_or_first_available_variant
   assign on_sale = false
@@ -8,7 +9,7 @@
 <section class="product-shell page-width" data-product-root>
   <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="{{ routes.root_url }}">Home</a>{% if product.collections.first %}<span>/</span><a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>{% endif %}<span>/</span><span>{{ product.title }}</span></nav>
   <div class="product-page">
-    <div class="product-media">
+    <div class="product-media{% if product.media.size <= 1 %} product-media--single{% endif %}">
       {% if product.media.size > 1 %}<div class="product-thumbs">{% for media in product.media limit:10 %}{% if media.media_type == 'image' %}<button type="button" class="product-thumb{% if media.id == product.featured_media.id %} is-active{% endif %}" data-product-thumb="{{ media | image_url:width:1600 }}" aria-label="View image {{ forloop.index }}">{{ media | image_url:width:180 | image_tag:loading:'lazy', alt:media.alt }}</button>{% endif %}{% endfor %}</div>{% endif %}
       <div class="product-main-media">{% if product.featured_media %}{{ product.featured_media | image_url:width:1800 | image_tag:id:'ProductMainImage', widths:'520,800,1100,1400,1800', sizes:'(max-width:900px) 100vw, 55vw', alt:product.featured_media.alt }}{% else %}{{ 'product-1' | placeholder_svg_tag:'placeholder-svg' }}{% endif %}</div>
     </div>
