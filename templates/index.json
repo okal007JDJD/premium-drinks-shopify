@@ -8,7 +8,7 @@
           "settings": {
             "eyebrow": "Delivered chilled",
             "heading": "Good times, delivered.",
-            "text": "Discover wines, spirits, beer and more \u2014 simple to shop and ready for delivery.",
+            "text": "Discover wines, spirits, beer and more — simple to shop and ready for delivery.",
             "button_label": "Shop now",
             "button_2_label": "View offers",
             "button_link": "/collections/all",
@@ -27,201 +27,79 @@
           }
         }
       },
-      "block_order": [
-        "slide1",
-        "slide2"
-      ],
-      "settings": {
-        "autoplay_seconds": 6
-      }
+      "block_order": ["slide1", "slide2"],
+      "settings": {"autoplay_seconds": 6}
     },
     "categories": {
       "type": "category-cards",
       "blocks": {
-        "c1": {
-          "type": "category",
-          "settings": {
-            "title": "Wine",
-            "link": "/collections/wine"
-          }
-        },
-        "c2": {
-          "type": "category",
-          "settings": {
-            "title": "Spirits & Mixers",
-            "link": "/collections/spirits-mixers"
-          }
-        },
-        "c3": {
-          "type": "category",
-          "settings": {
-            "title": "Beer & Cider",
-            "link": "/collections/beer-cider"
-          }
-        },
-        "c4": {
-          "type": "category",
-          "settings": {
-            "title": "Sparkling",
-            "link": "/collections/sparkling"
-          }
-        },
-        "c5": {
-          "type": "category",
-          "settings": {
-            "title": "Ready to Drink",
-            "link": "/collections/ready-to-drink"
-          }
-        },
-        "c6": {
-          "type": "category",
-          "settings": {
-            "title": "Gifting & Accessories",
-            "link": "/collections/gifting-accessories"
-          }
-        },
-        "c7": {
-          "type": "category",
-          "settings": {
-            "title": "Snacks",
-            "link": "/collections/snacks"
-          }
-        },
-        "c8": {
-          "type": "category",
-          "settings": {
-            "title": "Drink Dry",
-            "link": "/collections/drink-dry"
-          }
-        }
+        "c1": {"type":"category","settings":{"title":"Wine","link":"/collections/wine"}},
+        "c2": {"type":"category","settings":{"title":"Spirits & Mixers","link":"/collections/spirits-mixers"}},
+        "c3": {"type":"category","settings":{"title":"Beer & Cider","link":"/collections/beer-cider"}},
+        "c4": {"type":"category","settings":{"title":"Sparkling","link":"/collections/sparkling"}},
+        "c5": {"type":"category","settings":{"title":"Ready to Drink","link":"/collections/ready-to-drink"}},
+        "c6": {"type":"category","settings":{"title":"Gifting & Accessories","link":"/collections/gifting-accessories"}},
+        "c7": {"type":"category","settings":{"title":"Snacks","link":"/collections/snacks"}},
+        "c8": {"type":"category","settings":{"title":"Drink Dry","link":"/collections/drink-dry"}}
       },
-      "block_order": [
-        "c1",
-        "c2",
-        "c3",
-        "c4",
-        "c5",
-        "c6",
-        "c7",
-        "c8"
-      ],
+      "block_order": ["c1","c2","c3","c4","c5","c6","c7","c8"],
       "settings": {
-        "heading": "Shop by category",
-        "text": "Everything you need, easy to browse.",
-        "link_label": "Shop all",
-        "link": "/collections/all"
+        "heading":"Shop by category",
+        "text":"Everything you need, easy to browse.",
+        "link_label":"Shop all",
+        "link":"/collections/all"
       }
     },
     "trending": {
-      "type": "featured-collection",
+      "type":"featured-collection",
       "settings": {
-        "heading": "Trending now",
-        "text": "Popular picks, ready for delivery.",
-        "products_to_show": 10,
-        "soft_background": false,
-        "tag_filter": "trending"
+        "heading":"Cheers To Great Deals",
+        "text":"",
+        "products_to_show":10,
+        "soft_background":false,
+        "tag_filter":"trending"
       }
     },
     "promos": {
-      "type": "promo-grid",
+      "type":"promo-grid",
       "blocks": {
-        "p1": {
-          "type": "promo",
-          "settings": {
-            "heading": "Offers worth celebrating",
-            "text": "Save on selected favourites for a limited time.",
-            "button_label": "Shop offers",
-            "link": "/collections/all/offers"
-          }
-        },
-        "p2": {
-          "type": "promo",
-          "settings": {
-            "heading": "Gifts made easy",
-            "text": "Find something special for every occasion.",
-            "button_label": "Shop gifting",
-            "link": "/collections/gifting-accessories"
-          }
-        }
+        "p1":{"type":"promo","settings":{"heading":"Offers worth celebrating","text":"Save on selected favourites for a limited time.","button_label":"Shop offers","link":"/collections/all/offers"}},
+        "p2":{"type":"promo","settings":{"heading":"Gifts made easy","text":"Find something special for every occasion.","button_label":"Shop gifting","link":"/collections/gifting-accessories"}}
       },
-      "block_order": [
-        "p1",
-        "p2"
-      ],
-      "settings": {}
+      "block_order":["p1","p2"],
+      "settings":{}
     },
     "offers": {
-      "type": "featured-collection",
+      "type":"featured-collection",
       "settings": {
-        "heading": "Offers",
-        "text": "Limited-time savings across the store.",
-        "products_to_show": 10,
-        "soft_background": true,
-        "tag_filter": "offers"
+        "heading":"Offers",
+        "text":"Limited-time savings across the store.",
+        "products_to_show":10,
+        "soft_background":true,
+        "tag_filter":"offers"
       }
     },
     "last_chance": {
-      "type": "featured-collection",
+      "type":"featured-collection",
       "settings": {
-        "heading": "Last chance",
-        "text": "Final picks while stocks last.",
-        "products_to_show": 5,
-        "soft_background": false,
-        "tag_filter": "last-chance"
+        "heading":"Last chance",
+        "text":"Final picks while stocks last.",
+        "products_to_show":5,
+        "soft_background":false,
+        "tag_filter":"last-chance"
       }
     },
     "values": {
-      "type": "value-strip",
+      "type":"value-strip",
       "blocks": {
-        "v1": {
-          "type": "item",
-          "settings": {
-            "icon": "truck",
-            "heading": "Fast delivery",
-            "text": "Convenient delivery windows"
-          }
-        },
-        "v2": {
-          "type": "item",
-          "settings": {
-            "icon": "shield",
-            "heading": "Secure checkout",
-            "text": "Safe online payments"
-          }
-        },
-        "v3": {
-          "type": "item",
-          "settings": {
-            "icon": "gift",
-            "heading": "Great offers",
-            "text": "Fresh deals every week"
-          }
-        },
-        "v4": {
-          "type": "item",
-          "settings": {
-            "icon": "clock",
-            "heading": "Shop anytime",
-            "text": "Open online 24/7"
-          }
-        }
+        "v1":{"type":"item","settings":{"icon":"truck","heading":"Fast delivery","text":"Convenient delivery windows"}},
+        "v2":{"type":"item","settings":{"icon":"shield","heading":"Secure checkout","text":"Safe online payments"}},
+        "v3":{"type":"item","settings":{"icon":"gift","heading":"Great offers","text":"Fresh deals every week"}},
+        "v4":{"type":"item","settings":{"icon":"clock","heading":"Shop anytime","text":"Open online 24/7"}}
       },
-      "block_order": [
-        "v1",
-        "v2",
-        "v3",
-        "v4"
-      ],
-      "settings": {}
+      "block_order":["v1","v2","v3","v4"],
+      "settings":{}
     }
   },
-  "order": [
-    "hero",
-    "categories",
-    "trending",
-    "promos",
-    "offers",
-    "last_chance",
-    "values"
-  ]
+  "order":["hero","categories","trending","promos","offers","last_chance","values"]
 }
